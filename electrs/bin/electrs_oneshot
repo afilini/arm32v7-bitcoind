@@ -1,0 +1,19 @@
+#!/usr/bin/env sh
+
+set -ex
+
+# Generate config.toml
+electrs_init
+
+RPCUSER=`grep "rpcuser" /bitcoin/.bitcoin/bitcoin.conf | awk -F "=" '{print $2;}'`
+RPCPASS=`grep "rpcpassword" /bitcoin/.bitcoin/bitcoin.conf | awk -F "=" '{print $2;}'`
+
+echo -n "${RPCUSER}:${RPCPASS}" > /tmp/.generated_cookie
+
+if [ $# -gt 0 ]; then
+    args=("$@")
+else
+    args=("-vv" "--timestamp" "--conf" "/electrs/config.toml")
+fi
+
+electrs "${args[@]}" 2>&1 | tee -a /tmp/electrs-log

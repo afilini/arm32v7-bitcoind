@@ -1,0 +1,23 @@
+#!/usr/bin/env sh
+
+set -ex
+
+if [ ! -e "/electrs/config.tml" ]; then
+    echo "Creating config.toml"
+
+    cat <<EOF > /electrs/config.toml
+jsonrpc_import = true
+index_batch_size = 10
+bulk_index_threads = ${BULK_INDEX_THREADS:-4}
+daemon_rpc_addr = "${DAEMON_RPC_ADDR:-bitcoind:8332}"
+daemon_dir = "/bitcoin/.bitcoin"
+db_dir = "/electrs"
+cookie_file = "/tmp/.generated_cookie"
+electrum_rpc_addr = "0.0.0.0:50001"
+EOF
+
+fi
+
+cat /electrs/config.toml
+
+echo "Initialization completed successfully"
